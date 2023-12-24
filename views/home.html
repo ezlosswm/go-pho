@@ -1,0 +1,48 @@
+{{define "base"}}
+    {{template "head" .}}
+    {{template "home" .}}
+    {{template "close" .}}
+{{end}}
+
+{{define "home"}} 
+{{template "header" .}}
+<main class="max-w-3xl mx-auto px-8 space-y-5">
+  <!-- <form class="grid grid-cols-3 space-x-3" action="/contacts" method="POST">
+    <input
+      class="px-3 py-1 border rounded"
+      type="text"
+      name="name"
+      placeholder="name"
+    />
+    <input
+      class="px-3 py-1 border rounded"
+      type="tel"
+      name="tel"
+      placeholder="tel"
+    />
+
+    <button type="submit" class="bg-green-500 text-white rounded">Add</button>
+  </form> -->
+
+  <div classs="grid space-y-5">
+    <div class="flex justify-between p-2">
+      {{template "count" .}}
+      <!-- needs to be a template -->
+      <a
+        href="/add"
+        class="shadow bg-blue-500 hover:bg-blue-600 text-white rounded-full text-3xl font-bold h-10 w-10 text-center"
+        >+</a
+      >
+    </div>
+    <div
+      id="list"
+      hx-get="/contacts"
+      class="space-y-2"
+      hx-trigger="changed,load"
+    >
+      <br />
+      {{template "list" .}}
+    </div>
+  </div>
+</main>
+{{end}}

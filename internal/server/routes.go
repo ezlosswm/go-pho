@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,18 +13,27 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
-	// mux.HandleFunc("/", s.hello)
+	// pages
 	r.HandleFunc("/",s.handleIndex)
+	r.HandleFunc("/add", s.addContactPage)
+
+	// handlers
 	r.HandleFunc("/contacts", s.handleContacts)
     r.HandleFunc("/contacts/{id}", s.handleContactsByID)
 
 	return r 
 }
 
+// pages
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
-	s.templ.ExecuteTemplate(w, "index.html", nil)
+	s.templ.ExecuteTemplate(w, "base", nil)
 }
 
+func (s *Server) addContactPage(w http.ResponseWriter, r *http.Request) {
+	s.templ.ExecuteTemplate(w, "contact-page", nil)
+}
+
+// handlers
 func (s *Server)handleContacts(w http.ResponseWriter, r *http.Request){
 	switch r.Method {
 	case "GET":
@@ -50,14 +58,19 @@ func (s *Server) getContacts(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	w.WriteHeader(http.StatusFound)
-	resp, _ := json.Marshal(contacts)
-	_,_ = w.Write(resp)
+	totalCount, err := s.db.Count()
+	if err != nil {
+		log.Println(err)
+	}
+
+	s.templ.ExecuteTemplate(w, "count", map[string]any{"Count": totalCount, "SwapOOB": true})
+	s.templ.ExecuteTemplate(w, "list", contacts)
 }
 
 func (s *Server) getContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idParam := vars["id"]
+	log.Println("id", idParam)
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -73,9 +86,7 @@ func (s *Server) getContact(w http.ResponseWriter, r *http.Request) {
 		 return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	resp, _ := json.Marshal(contact)
-	_, _ = w.Write(resp)
+	s.templ.ExecuteTemplate(w, "person", contact)
 }
 
 func (s *Server) postContact(w http.ResponseWriter, r *http.Request) {
@@ -85,9 +96,7 @@ func (s *Server) postContact(w http.ResponseWriter, r *http.Request) {
 
 	s.db.Store(contact)
 
-	w.WriteHeader(http.StatusOK)
-	resp, _ := json.Marshal(contact)
-	_, _ = w.Write(resp)
+	http.Redirect(w,r,"/add",http.StatusSeeOther)
 }
 
 func (s *Server) deleteContact(w http.ResponseWriter, r *http.Request) {
@@ -100,13 +109,17 @@ func (s *Server) deleteContact(w http.ResponseWriter, r *http.Request) {
 	// Example: id 30 does not exists
 	// What do??????
 	if err := s.db.Delete(id); err != nil {
-		log.Fatal("id delete or some shit")
+		log.Println(id)
+		log.Print("id delete or some shit")
 	}
 
+	totalCount, err := s.db.Count()
+	if err != nil {
+		log.Println(err)
+	}
 
-	w.WriteHeader(http.StatusOK)
-	resp, _ := json.Marshal("deleted")
-	_, _ = w.Write(resp)
+	http.Redirect(w,r,"/",http.StatusSeeOther)
+	s.templ.ExecuteTemplate(w, "count", map[string]any{"Count": totalCount, "SwapOOB": true})
 }
 
 func getID(r *http.Request) (int,error) {

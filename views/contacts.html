@@ -1,0 +1,24 @@
+{{define "list"}} {{range .Contacts}} {{template "contact" .}} {{end}} {{end}}
+{{define "contact"}}
+<div
+  id="contact-{{.ID}}"
+  class="grid items-center border-t border-b p-2 grid-cols-3"
+  id="contact"
+>
+  <div class="col-span-2 flex items-center space-x-3">
+    <div class="w-12 h-12 rounded-full bg-gray-400">
+      <!-- this is gonna be the avatars -->
+    </div>
+    <div class="grid">
+      <p class="text-lg font-medium">{{.Name}}</p>
+      <p class="text-gray-700 font-thin">{{.Tel}}</p>
+    </div>
+  </div>
+  <a
+    href="/contacts/{{.ID}}"
+    class="flex-end w-12 h-12 text-center text-3xl font-bold"
+  >
+    >
+  </a>
+</div>
+{{end}}

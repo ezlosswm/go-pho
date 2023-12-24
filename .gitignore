@@ -21,3 +21,6 @@ tmp/
 # IDE specific files
 .vscode
 .idea
+
+# in progress 
+views/person.html

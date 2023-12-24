@@ -1,0 +1,16 @@
+{{define "count"}}
+<div
+  class="py-2"
+  id="total"
+  {{
+  if
+  .SwapOOB
+  }}hx-swap-oob="innerHTML:#total"
+  {{end}}
+  hx-trigger="change"
+>
+  <p class="text-blue-600 font-medium">
+    Count: <span class="font-normal text-sm">({{.Count}})</span>
+  </p>
+</div>
+{{end}}

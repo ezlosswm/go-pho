@@ -1,10 +1,16 @@
-# Project pb
+# Go-Pho
+### Go-Pho, at its core is a CRUD API serving html templates using Go's templating engine and HTMX.
 
-One Paragraph of project description goes here
+## Features
+- Create a new contact
+- Read the list of contacts
+- Delete a specified contact
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Stack
+- Go
+- HTMX
+- TailwindCSS
+- SQLite3
 
 ## MakeFile
 
@@ -37,3 +43,9 @@ clean up binary from the last build
 ```bash
 make clean
 ```
+
+## Todo: 
+- [ ] Search 
+- [ ] Delete and edit from the `/contacts/{id}` page
+- [ ] Avatars 
+- [ ] Make it nice lol

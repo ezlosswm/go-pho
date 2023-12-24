@@ -15,6 +15,7 @@ type Service interface {
 	GetContact(int) (*domain.Contact, error)
 	GetContacts() (*domain.Contacts, error)
 	Delete(int) error
+	Count() (int, error)
 }
 
 type service struct {
@@ -22,7 +23,7 @@ type service struct {
 }
 
 func New() Service {
-	db, err := sql.Open("sqlite3", "test.db")
+	db, err := sql.Open("sqlite3", "contact.db")
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
@@ -83,8 +84,22 @@ func (s *service) Store(c *domain.Contact) error {
 
 func (s *service) Delete(id int) error {
 	_, err := s.db.Exec("DELETE FROM contact where id = $1", id)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil 
+}
+
+// sql easy peasy lemon squeezy for miches
+func (s *service) Count() (int, error) {
+	var count int
+    err := s.db.QueryRow("SELECT COUNT(tel) FROM contact").Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
 
 func scan(rows *sql.Rows) (*domain.Contact, error) {

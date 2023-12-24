@@ -1,0 +1,23 @@
+{{define "backup-contact"}}
+<div
+  id="contact-{{.ID}}"
+  class="grid place-contact-center grid-cols-3"
+  id="contact"
+>
+  <div class="col-span-2 flex items-center space-x-3">
+    <div class="w-12 h-12 rounded-full bg-gray-400"></div>
+    <div class="grid">
+      <p class="text-lg font-medium">{{.Name}}</p>
+      <p class="text-gray-700 font-thin">{{.Tel}}</p>
+    </div>
+  </div>
+  <button
+    hx-delete="/contacts/{{.ID}}"
+    hx-target="#contact-{{.ID}}"
+    hx-swap="innerHTML"
+    class="bg-red-500 text-white shadow text-lg italic px-4 py-1 rounded h-12"
+  >
+    &times;
+  </button>
+</div>
+{{end}}

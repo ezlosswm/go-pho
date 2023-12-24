@@ -11,11 +11,11 @@ type Template struct {
 
 func NewTmpl() *Template {
 	 return &Template{
-	 	templates: template.Must(template.ParseGlob("views/*.html")),
+	 	templates: template.Must(template.ParseFiles("views/*.html")),
+	 	// templates: template.Must(template.ParseGlob("views/*.html")),
 	}
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
-
