@@ -1,0 +1,31 @@
+{{block "edit" .}}
+<form hx-put="/contacts/{{.ID}}" hx-target="this" hx-swap="outerHTML">
+  <div class="grid">
+    <label>Name</label>
+    <input class="px-3 py-1 border" type="text" name="name" value="{{.Name}}" />
+  </div>
+
+  <div class="grid">
+    <label>Phone number</label>
+    <input class="px-3 py-1 border" type="tel" name="tel" value="{{.Tel}}" />
+  </div>
+
+  <div class="flex w-full justify-around">
+    <button
+      hx-put="/contacts/{{.ID}}/edit"
+      type="submit"
+      class="rounded bg-blue-600 hover:bg-blue-700 text-white px-3 py-1"
+    >
+      Ok
+    </button>
+    <!-- fix cancel button, that shit aint working lol -->
+    <button
+      hx-get="/contacts/{{.ID}}"
+      type="button"
+      class="rounded border border-black hover:bg-gray-100 text-gray-950 px-3 py-1"
+    >
+      Cancel
+    </button>
+  </div>
+</form>
+{{end}}
