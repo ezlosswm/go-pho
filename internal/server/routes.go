@@ -14,24 +14,30 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
 	// pages
-	r.HandleFunc("/",s.handleIndex)
+	r.HandleFunc("/",s.homePage)
 	r.HandleFunc("/add", s.addContactPage)
+	r.HandleFunc("/contacts/edit", s.editPage)
 
 	// handlers
 	r.HandleFunc("/contacts", s.handleContacts)
-    r.HandleFunc("/contacts/{id}", s.handleContactsByID)
+	r.HandleFunc("/contacts/{id:[0-9]+}", s.handleContactsByID)
 
 	return r 
 }
 
 // pages
-func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
+func (s *Server) homePage(w http.ResponseWriter, r *http.Request) {
 	s.templ.ExecuteTemplate(w, "base", nil)
 }
 
 func (s *Server) addContactPage(w http.ResponseWriter, r *http.Request) {
 	s.templ.ExecuteTemplate(w, "contact-page", nil)
 }
+
+func (s *Server) editPage(w http.ResponseWriter, r *http.Request) {
+	s.templ.ExecuteTemplate(w, "edit", nil)
+}
+
 
 // handlers
 func (s *Server)handleContacts(w http.ResponseWriter, r *http.Request){
@@ -49,6 +55,8 @@ func (s *Server) handleContactsByID(w http.ResponseWriter, r *http.Request) {
 		s.getContact(w,r)
 	case "DELETE": 
 		s.deleteContact(w,r)
+	case "PUT": 
+		s.handleEdit(w,r)
 	}
 }
 
@@ -70,7 +78,6 @@ func (s *Server) getContacts(w http.ResponseWriter, r *http.Request) {
 func (s *Server) getContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idParam := vars["id"]
-	log.Println("id", idParam)
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -109,8 +116,7 @@ func (s *Server) deleteContact(w http.ResponseWriter, r *http.Request) {
 	// Example: id 30 does not exists
 	// What do??????
 	if err := s.db.Delete(id); err != nil {
-		log.Println(id)
-		log.Print("id delete or some shit")
+		log.Printf("error deleteing contact with ID %d: %v", id, err)
 	}
 
 	totalCount, err := s.db.Count()
@@ -118,8 +124,12 @@ func (s *Server) deleteContact(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	http.Redirect(w,r,"/",http.StatusSeeOther)
+	http.Redirect(w,r,"/",http.StatusOK)
 	s.templ.ExecuteTemplate(w, "count", map[string]any{"Count": totalCount, "SwapOOB": true})
+}
+
+func (s *Server) handleEdit(w http.ResponseWriter, r *http.Request) {
+	// not even sure at this point
 }
 
 func getID(r *http.Request) (int,error) {
@@ -128,7 +138,7 @@ func getID(r *http.Request) (int,error) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return 0, fmt.Errorf("Error: id %v unable to convert to int", idParam)
+		return 0, fmt.Errorf("error: id %v unable to convert to int", idParam)
  	}
 	
 	return id, nil

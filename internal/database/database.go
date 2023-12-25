@@ -15,6 +15,7 @@ type Service interface {
 	GetContact(int) (*domain.Contact, error)
 	GetContacts() (*domain.Contacts, error)
 	Delete(int) error
+	UpdateContact(int, *domain.Contact) error
 	Count() (int, error)
 }
 
@@ -83,7 +84,20 @@ func (s *service) Store(c *domain.Contact) error {
 }
 
 func (s *service) Delete(id int) error {
-	_, err := s.db.Exec("DELETE FROM contact where id = $1", id)
+	_, err := s.db.Exec("DELETE FROM contact WHERE id = $1", id)
+
+	return err 
+}
+
+func (s *service) UpdateContact(id int, c *domain.Contact) error {
+	query := `UPDATE contact SET name = $1, tel = $2 WHERE id = $3`
+	updatedContact, err := s.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+
+	_, err = updatedContact.Exec(c.Name, c.Tel, c.ID)
 	if err != nil {
 		return err
 	}
