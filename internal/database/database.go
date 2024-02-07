@@ -32,13 +32,14 @@ func New() Service {
 	}
 
 	return &service{db: db}
-} 
+}
 
 func (s *service) GetContacts() (*domain.Contacts, error) {
 	rows, err := s.db.Query("SELECT * FROM contact")
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	contacts := new(domain.Contacts)
 	for rows.Next() {
@@ -58,57 +59,59 @@ func (s *service) GetContact(id int) (*domain.Contact, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer q.Close()
 
 	for q.Next() {
 		return scan(q)
 	}
 
-	return nil, fmt.Errorf("id %d not found", id) 
+	return nil, fmt.Errorf("id %d not found", id)
 }
 
 func (s *service) Store(c *domain.Contact) error {
 	q := `INSERT INTO contact 
 	(name, tel)
 	values ($1, $2)
-	`	
+	`
 
 	_, err := s.db.Exec(
-		q, 
+		q,
 		c.Name,
 		c.Tel)
 	if err != nil {
 		return err
 	}
-		
+
 	return nil
 }
 
 func (s *service) Delete(id int) error {
 	_, err := s.db.Exec("DELETE FROM contact WHERE id = $1", id)
 
-	return err 
+	return err
 }
 
 func (s *service) UpdateContact(id int, c *domain.Contact) error {
+	log.Println(c)
 	query := `UPDATE contact SET name = $1, tel = $2 WHERE id = $3`
 	updatedContact, err := s.db.Prepare(query)
 	if err != nil {
 		return err
 	}
-
+	defer updatedContact.Close()
 
 	_, err = updatedContact.Exec(c.Name, c.Tel, c.ID)
 	if err != nil {
 		return err
 	}
 
-	return nil 
+	return nil
 }
 
 // sql easy peasy lemon squeezy for miches
 func (s *service) Count() (int, error) {
 	var count int
-    err := s.db.QueryRow("SELECT COUNT(tel) FROM contact").Scan(&count)
+	err := s.db.QueryRow("SELECT COUNT(tel) FROM contact").Scan(&count)
 	if err != nil {
 		return 0, err
 	}

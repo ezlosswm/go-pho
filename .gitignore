@@ -23,4 +23,4 @@ tmp/
 .idea
 
 # in progress 
-views/person.html
+static/
