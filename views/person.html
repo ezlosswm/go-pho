@@ -1,64 +1,78 @@
-{{block "person" .}} 
-{{template "head" .}}
+{{block "person" .}} {{template "head" .}}
 <main class="max-w-md mx-auto px-8 space-y-4">
   <a href="/" class="text-lg">Back</a>
 
-  <div 
-      hx-target="this"
-      hx-swap="outerHTML"
-      class="text-center grid space-y-5 justify-center">
+  {{template "display" .}}
+</main>
+{{template "close" .}} {{end}} {{block "display" .}}
+<div
+  hx-target="this"
+  hx-swap="outerHTML"
+  class="text-center grid space-y-5 justify-center"
+>
+  <!-- avatar -->
+  <div class="bg-gray-300 w-36 h-36 rounded-full"></div>
 
-    <!-- avatar -->
-    <div class="bg-gray-300 w-36 h-36 rounded-full"></div>
+  <div class="space-y-4">
+    <h3 class="text-3xl font-bold">{{.Name}}</h3>
+    <h4 class="text-lg">{{.Tel}}</h4>
 
-    <div class="space-y-4">
-      <h3 class="text-3xl font-bold">{{.Name}}</h3>
-      <h4 class="text-lg">{{.Tel}}</h4>
-
-      <!-- nvm this can be swapped lol -->
-      <div class="flex space-x-4 justify-center w-full">
-        <button hx-get="/contacts/{{.ID}}/edit"
-          class="bg-blue-600 hover:bg-blue-700 w-1/2 text-white shadow w- px-3 py-1 rounded"
-        >
-          Edit
-        </button>
-      </div>
+    <!-- nvm this can be swapped lol -->
+    <div class="flex space-x-4 justify-center w-full">
+      <button
+        hx-get="/contacts/{{.ID}}/edit"
+        class="bg-blue-600 hover:bg-blue-700 w-1/2 text-white shadow w- px-3 py-1 rounded"
+      >
+        Edit
+      </button>
     </div>
   </div>
-
-</main>
-{{template "close" .}} {{end}}
+</div>
+{{end}}
 
 <!-- editting form -->
 {{block "edit" .}}
-<form hx-put="/contacts/{{.ID}}" hx-target="this" hx-swap="innerHTML">
-
+<form
+  hx-put="/contacts/{{.ID}}"
+  hx-target="this"
+  hx-swap="outerHTML"
+  class="space-y-4"
+>
   <div class="grid">
     <label>Name</label>
-    <input class="px-3 py-1 border" type="text" value={{.Name}} name="name"/>
+    <input
+      class="px-3 py-1 border text-gray-400"
+      type="text"
+      value="{{.Name}}"
+      name="name"
+    />
   </div>
 
   <div class="grid">
     <label>Phone number</label>
-    <input class="px-3 py-1 border" type="text" value={{.Tel}} name="tel"/>
+    <input
+      class="px-3 py-1 border text-gray-400"
+      type="text"
+      value="{{.Tel}}"
+      name="tel"
+    />
   </div>
 
-  <div class="flex w-full justify-around">
+  <div class="flex w-full space-x-4 px-2">
     <button
       type="submit"
-      class="rounded bg-blue-600 hover:bg-blue-700 text-white px-3 py-1"
+      class="w-full rounded bg-blue-500 hover:bg-blue-700 text-white px-3 py-1"
     >
       Ok
     </button>
 
-    <a 
-      href="/contacts/{{.ID}}"
+    <button
+      hx-get="/contacts/{{.ID}}/display"
       type="button"
-      class="rounded border border-black hover:bg-gray-100 text-gray-950 px-3 py-1"
+      class="w-full rounded border border-black hover:bg-gray-100 text-gray-950 px-3 py-1"
     >
       Cancel
-    </a>
+    </button>
   </div>
-
 </form>
 {{end}}

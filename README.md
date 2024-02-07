@@ -1,12 +1,13 @@
 # Go-Pho
 
-### Go-Pho, at its core is a CRUD API serving html templates using Go's templating engine and HTMX.
+## Go Phonebook, at its core is a CRUD API serving html tempaltes using Go's templating engine and HTMX.
 
 ## Features
 
 - Create a new contact
 - Read the list of contacts
 - Delete a specified contact
+- Updates a contact
 
 ## Stack
 
@@ -53,10 +54,8 @@ clean up binary from the last build
 make clean
 ```
 
-## Todo:
+## To Do
 
-- [ ] Search
-- [ ] Edit from the `/contacts/{id}` page
-- [ ] Avatars
-- [ ] Create subdirectories to organize templates
-- [ ] Make it nice lol
+- Remove HTMX & TailwindCSS CDNs
+- Fix styling
+- Cleaner code
