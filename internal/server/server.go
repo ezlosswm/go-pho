@@ -9,14 +9,14 @@ import (
 	"strconv"
 	"time"
 
-	"pb/internal/database"
+	"pb/internal/mock"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port  int
+	db    mock.Service
 	templ *template.Template
 }
 
@@ -24,12 +24,11 @@ func (t *Server) Render(w io.Writer, name string, data interface{}) error {
 	return t.templ.ExecuteTemplate(w, name, data)
 }
 
-
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
-		port: port,
-		db:   database.New(),
+		port:  port,
+		db:    mock.New(),
 		templ: template.Must(template.ParseGlob("views/*.html")),
 	}
 
