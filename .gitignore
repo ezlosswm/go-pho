@@ -23,4 +23,6 @@ tmp/
 .idea
 
 # in progress 
-static/
+.env
+
+

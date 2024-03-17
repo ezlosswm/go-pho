@@ -23,8 +23,12 @@ type service struct {
 	db *sql.DB
 }
 
+var (
+	dburl = os.Getenv("DB_URL")
+)
+
 func New() Service {
-	db, err := sql.Open("sqlite3", "contact.db")
+	db, err := sql.Open("sqlite3", dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
